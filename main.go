@@ -9,9 +9,9 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/joho/godotenv"
 	grpchandler "github.com/thegoodparticle/vehicle-data-svc/grpc-handler"
-	"github.com/thegoodparticle/vehicle-data-svc/models"
 	"github.com/thegoodparticle/vehicle-data-svc/store"
 	"google.golang.org/grpc"
+	"google.golang.org/grpc/reflection"
 
 	pb "github.com/thegoodparticle/vehicle-data-svc/vehicledata"
 )
@@ -38,17 +38,19 @@ func main() {
 		log.Printf("We are connected to the %s database\n", dbDriver)
 	}
 
-	storeObj.DB.Debug().AutoMigrate(&models.Vehicle{}, &models.Driver{}) //database migration
+	// storeObj.DB.Debug().AutoMigrate(&models.Vehicle{}, &models.Driver{}) //database migration
+	store.Load(storeObj.DB)
 
 	port := os.Getenv("GRPC_PORT")
 
-	lis, err := net.Listen("tcp", "localhost:"+port)
+	lis, err := net.Listen("tcp", ":"+port)
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}
 
 	grpcServer := grpc.NewServer()
 	pb.RegisterVehicleDataServer(grpcServer, grpchandler.NewServer(&storeObj))
+	reflection.Register(grpcServer)
 	err = grpcServer.Serve(lis)
 	if err != nil {
 		log.Fatalf("Could not start grpc server. Error - %+v\n", err)

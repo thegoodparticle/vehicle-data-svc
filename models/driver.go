@@ -3,7 +3,7 @@ package models
 import "time"
 
 type Driver struct {
-	LicenseNumber string    `json:"licenseNumber" gorm:"primary_key"`
-	DriverName    string    `json:"name" gorm:"size:255;not null"`
-	LicenseDate   time.Time `json:"licenseDate" gorm:"not null"`
+	LicenseNumber string    `json:"licenseNumber,omitempty" gorm:"primary_key"`
+	DriverName    string    `json:"name,omitempty" gorm:"size:255;not null"`
+	LicenseDate   time.Time `json:"licenseDate,omitempty" gorm:"not null"`
 }

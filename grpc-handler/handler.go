@@ -28,7 +28,11 @@ func (s *vehicleDataServer) GetVehicleDataByRegistration(ctx context.Context, re
 	vehicleData, err := s.dataStore.FindVehicleDataByRegistration(registrationReq.RegistrationNumber)
 	if err != nil {
 		log.Printf("failed to get vehicle data for registration %s. Error - %s", registrationReq.RegistrationNumber, err)
-		return nil, errors.New("failed to get driver data. error " + err.Error())
+		return nil, errors.New("failed to get vehicle data. error " + err.Error())
+	}
+
+	if vehicleData == nil {
+		return nil, nil
 	}
 
 	return &pb.VehicleInfo{
@@ -36,6 +40,7 @@ func (s *vehicleDataServer) GetVehicleDataByRegistration(ctx context.Context, re
 		VehicleModel:       vehicleData.VehicleModel,
 		Company:            vehicleData.Company,
 		RegistrationDate:   timestamppb.New(vehicleData.RegistrationDate),
+		OwnerLicenseNumber: vehicleData.OwnerLicense,
 	}, nil
 }
 
@@ -51,11 +56,16 @@ func (s *vehicleDataServer) GetVehicleDataByChassisEngine(ctx context.Context, c
 		return nil, errors.New("failed to get driver data. error " + err.Error())
 	}
 
+	if vehicleData == nil {
+		return nil, nil
+	}
+
 	return &pb.VehicleInfo{
 		RegistrationNumber: vehicleData.RegistrationNumber,
 		VehicleModel:       vehicleData.VehicleModel,
 		Company:            vehicleData.Company,
 		RegistrationDate:   timestamppb.New(vehicleData.RegistrationDate),
+		OwnerLicenseNumber: vehicleData.OwnerLicense,
 	}, nil
 }
 
@@ -68,6 +78,10 @@ func (s *vehicleDataServer) GetDriverDataByLicenseNumber(ctx context.Context, li
 	if err != nil {
 		log.Printf("failed to get driver data for license %s. Error - %s", licenseReq.LicenseNumber, err)
 		return nil, errors.New("failed to get driver data. error " + err.Error())
+	}
+
+	if driverData == nil {
+		return nil, nil
 	}
 
 	return &pb.DriverInfo{

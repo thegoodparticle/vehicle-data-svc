@@ -26,6 +26,7 @@ message VehicleInfo {
     string VehicleModel = 2;
     string Company = 3;
     google.protobuf.Timestamp RegistrationDate = 4; 
+    string OwnerLicenseNumber = 5;
 }
 
 message LicenseRequest {

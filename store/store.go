@@ -13,11 +13,11 @@ type Store struct {
 func (s *Store) FindVehicleDataByRegistration(registrationNumber string) (*models.Vehicle, error) {
 	var err error
 
-	var vehicle *models.Vehicle
+	vehicle := &models.Vehicle{}
 	err = s.DB.Debug().Model(&models.Vehicle{}).Where("registration_number = ?", registrationNumber).Take(vehicle).Error
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return vehicle, nil
+			return nil, nil
 		}
 		return nil, err
 	}
@@ -28,12 +28,12 @@ func (s *Store) FindVehicleDataByRegistration(registrationNumber string) (*model
 func (s *Store) FindVehicleDataByChassisEngine(engineNumber, chassisNumber string) (*models.Vehicle, error) {
 	var err error
 
-	var vehicle *models.Vehicle
+	vehicle := &models.Vehicle{}
 	err = s.DB.Debug().Model(&models.Vehicle{}).Where("engine_number = ? and chassis_number = ?",
 		engineNumber, chassisNumber).Take(vehicle).Error
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return vehicle, nil
+			return nil, nil
 		}
 		return nil, err
 	}
@@ -44,11 +44,11 @@ func (s *Store) FindVehicleDataByChassisEngine(engineNumber, chassisNumber strin
 func (s *Store) FindDriverDataByLicenseNumber(licenseNumber string) (*models.Driver, error) {
 	var err error
 
-	var driver *models.Driver
+	driver := &models.Driver{}
 	err = s.DB.Debug().Model(&models.Driver{}).Where("license_number = ?", licenseNumber).Take(driver).Error
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			return driver, nil
+			return nil, nil
 		}
 		return nil, err
 	}
