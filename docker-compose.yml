@@ -1,0 +1,37 @@
+version: '3'
+services:
+  app:
+    container_name: vehicle-data-svc
+    build: .
+    ports:
+      - 8080:8080
+    restart: on-failure
+    volumes:
+      - api:/usr/src/app/
+    depends_on:
+      - vehicle-postgres
+    networks:
+      - vehicle
+
+  vehicle-postgres:
+    image: postgres:latest
+    container_name: vehicle-db-pgsql
+    environment: 
+      - POSTGRES_USER=admin
+      - POSTGRES_PASSWORD=vehicleadmin
+      - POSTGRES_DB=vehicle-info
+    ports:
+      - '5432:5432'
+    volumes:
+      - database_postgres:/var/lib/postgresql/data
+    networks:
+      - vehicle
+
+volumes:
+  api:
+  database_postgres:
+
+networks:
+  vehicle:
+    driver: bridge
+
