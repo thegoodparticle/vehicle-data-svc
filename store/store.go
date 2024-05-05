@@ -41,11 +41,11 @@ func (s *Store) FindVehicleDataByChassisEngine(engineNumber, chassisNumber strin
 	return vehicle, nil
 }
 
-func (s *Store) FindDriverDataByLicenseNumber(licenseNumber string) (*models.Driver, error) {
+func (s *Store) FindOwnerDataByID(licenseNumber string) (*models.Owner, error) {
 	var err error
 
-	driver := &models.Driver{}
-	err = s.DB.Debug().Model(&models.Driver{}).Where("license_number = ?", licenseNumber).Take(driver).Error
+	owner := &models.Owner{}
+	err = s.DB.Debug().Model(&models.Owner{}).Where("owner_id = ?", licenseNumber).Take(owner).Error
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return nil, nil
@@ -53,5 +53,5 @@ func (s *Store) FindDriverDataByLicenseNumber(licenseNumber string) (*models.Dri
 		return nil, err
 	}
 
-	return driver, nil
+	return owner, nil
 }

@@ -16,7 +16,7 @@ services:
 
   app:
     container_name: vehicle-data-svc
-    image: vehicle-data-svc:v1.0.0
+    image: vehicle-data-svc:test
     ports:
       - 8080:8080
     restart: on-failure

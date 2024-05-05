@@ -36,11 +36,12 @@ func (s *vehicleDataServer) GetVehicleDataByRegistration(ctx context.Context, re
 	}
 
 	return &pb.VehicleInfo{
-		RegistrationNumber: registrationReq.RegistrationNumber,
-		VehicleModel:       vehicleData.VehicleModel,
-		Company:            vehicleData.Company,
-		RegistrationDate:   timestamppb.New(vehicleData.RegistrationDate),
-		OwnerLicenseNumber: vehicleData.OwnerLicense,
+		RegistrationNumber:     registrationReq.RegistrationNumber,
+		VehicleModel:           vehicleData.VehicleModel,
+		Company:                vehicleData.Company,
+		RegistrationDate:       timestamppb.New(vehicleData.RegistrationIssueDate),
+		RegistrationExpiryDate: timestamppb.New(vehicleData.RegistrationExpiryDate),
+		OwnerID:                vehicleData.OwnerID,
 	}, nil
 }
 
@@ -53,7 +54,7 @@ func (s *vehicleDataServer) GetVehicleDataByChassisEngine(ctx context.Context, c
 	if err != nil {
 		log.Printf("failed to get vehicle data for engine/chassis %s/%s. Error - %s",
 			chassisEngineReq.EngineNumber, chassisEngineReq.ChassisNumber, err)
-		return nil, errors.New("failed to get driver data. error " + err.Error())
+		return nil, errors.New("failed to get owner data. error " + err.Error())
 	}
 
 	if vehicleData == nil {
@@ -61,32 +62,35 @@ func (s *vehicleDataServer) GetVehicleDataByChassisEngine(ctx context.Context, c
 	}
 
 	return &pb.VehicleInfo{
-		RegistrationNumber: vehicleData.RegistrationNumber,
-		VehicleModel:       vehicleData.VehicleModel,
-		Company:            vehicleData.Company,
-		RegistrationDate:   timestamppb.New(vehicleData.RegistrationDate),
-		OwnerLicenseNumber: vehicleData.OwnerLicense,
+		RegistrationNumber:     vehicleData.RegistrationNumber,
+		VehicleModel:           vehicleData.VehicleModel,
+		Company:                vehicleData.Company,
+		RegistrationDate:       timestamppb.New(vehicleData.RegistrationIssueDate),
+		RegistrationExpiryDate: timestamppb.New(vehicleData.RegistrationExpiryDate),
+		OwnerID:                vehicleData.OwnerID,
 	}, nil
 }
 
-func (s *vehicleDataServer) GetDriverDataByLicenseNumber(ctx context.Context, licenseReq *pb.LicenseRequest) (*pb.DriverInfo, error) {
-	if licenseReq == nil || licenseReq.LicenseNumber == "" {
+func (s *vehicleDataServer) GetOwnerDataByID(ctx context.Context, ownerReq *pb.OwnerRequest) (*pb.OwnerInfo, error) {
+	if ownerReq == nil || ownerReq.OwnerID == "" {
 		return nil, errors.New("empty license number found in request")
 	}
 
-	driverData, err := s.dataStore.FindDriverDataByLicenseNumber(licenseReq.LicenseNumber)
+	ownerData, err := s.dataStore.FindOwnerDataByID(ownerReq.OwnerID)
 	if err != nil {
-		log.Printf("failed to get driver data for license %s. Error - %s", licenseReq.LicenseNumber, err)
-		return nil, errors.New("failed to get driver data. error " + err.Error())
+		log.Printf("failed to get owner data for license %s. Error - %s", ownerReq.OwnerID, err)
+		return nil, errors.New("failed to get owner data. error " + err.Error())
 	}
 
-	if driverData == nil {
+	if ownerData == nil {
 		return nil, nil
 	}
 
-	return &pb.DriverInfo{
-		LicenseNumber: driverData.LicenseNumber,
-		DriverName:    driverData.DriverName,
-		LicenseDate:   timestamppb.New(driverData.LicenseDate),
+	return &pb.OwnerInfo{
+		OwnerID:        ownerData.OwnerID,
+		OwnerFirstName: ownerData.FirstName,
+		OwnerLastName:  ownerData.LastName,
+		MobileNumber:   ownerData.MobileNumber,
+		Address:        ownerData.Address,
 	}, nil
 }
