@@ -1,0 +1,49 @@
+apiVersion: v1
+kind: Secret
+metadata:
+  name: vehicle-data-svc-secret
+type: Opaque
+data:
+  DB_HOST: cG9zdGdyZXMudmVoaWNsZQ==
+  DB_USER: cG9zdGdyZXM=
+  DB_PASSWORD: dmVoaWNsZWFkbWlu
+  DB_NAME: dmVoaWNsZV9pbmZv
+  DB_PORT: NTQzMg==
+  GRPC_PORT: ODA4MA==
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vehicle-data-svc
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vehicle-data-svc
+  template:
+    metadata:
+      labels:
+        app: vehicle-data-svc
+    spec:
+      containers:
+        - name: vehicle-data-svc
+          image: vehicle-data-svc:v1.1.0
+          imagePullPolicy: IfNotPresent
+          ports:
+            - containerPort: 8080
+          envFrom:
+            - secretRef:
+                name: vehicle-data-svc-secret
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: vehicle-data-svc
+  labels:
+    app: vehicle-data-svc
+spec:
+  type: NodePort
+  ports:
+    - port: 8080
+  selector:
+    app: vehicle-data-svc

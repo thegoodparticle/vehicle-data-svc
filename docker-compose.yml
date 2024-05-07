@@ -4,9 +4,9 @@ services:
     image: postgres:latest
     container_name: vehicle-db-pgsql
     environment: 
-      - POSTGRES_USER=admin
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=vehicleadmin
-      - POSTGRES_DB=vehicle-info
+      - POSTGRES_DB=vehicle_info
     ports:
       - '5432:5432'
     volumes:
@@ -16,7 +16,7 @@ services:
 
   app:
     container_name: vehicle-data-svc
-    image: vehicle-data-svc:test
+    image: vehicle-data-svc:v1.0.0
     ports:
       - 8080:8080
     restart: on-failure
